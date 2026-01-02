@@ -1,10 +1,91 @@
-import React, { useState } from 'react';
+import React, { useState, useRef,  } from 'react';
 import Header from './Header';
+import checkValidate from '../utils/validate';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile} from "firebase/auth";
+import { auth } from "../utils/firebase.js";
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { addUser } from '../utils/userSlice.js';
 
 const Login = () => {
 
+  const dispatch = useDispatch();
+
   const[isSignInForm, setIsSignInForm] = useState(true);
 
+  const [errorMessage, setErrorMessage] = useState(null);
+
+  const navigate = useNavigate();
+
+  const email = useRef(null);
+  const password = useRef(null);
+  const fullName = useRef(null);
+
+  
+  const handleButtonClick = () => {
+    // Validate the data
+    //check if it matches the criteria 
+
+    // console.log(email);
+    // console.log(passward);
+    const nameValue = !isSignInForm ? fullName.current?.value : null;
+
+    const message = checkValidate( email.current.value, password.current.value, nameValue, isSignInForm);
+    // console.log(message);
+    setErrorMessage(message);
+
+    if(message) return;
+
+    if(!isSignInForm){
+      // Sign Up Logic
+       createUserWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          // Signed up
+          const user = userCredential.user;
+           updateProfile(user, {
+            displayName: nameValue,
+            photoURL: "https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-qo9h82134t9nv0j0.jpg",
+          }).then(() => {
+            navigate("/browse");
+          });
+        })
+
+
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setErrorMessage(errorCode + "-" + errorMessage);
+          
+        });
+
+    }else{
+      //Sign In/Log In Logic
+      signInWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          // Signed in
+          const {user} = userCredential.user;
+          console.log(user);
+          dispatch(addUser(user));
+          navigate('/browse');
+          
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setErrorMessage(errorCode + "-" + errorMessage);
+        });
+    }
+    }
+
+  
   const toggleSignInForm = () => {
     setIsSignInForm(!isSignInForm);
   };
@@ -13,18 +94,19 @@ const Login = () => {
     <div >
       <Header />
       <div className='absolute'>
-      <img
-        src='https://assets.nflxext.com/ffe/siteui/vlv3/d13e2d55-5cdd-48c0-a55b-4b292d0b9889/web/IN-en-20251229-TRIFECTA-perspective_d7edcd70-4cfd-441c-858c-c5e400ed6c2b_medium.jpg'
-        alt="Background"
-      />
-</div>
-      <form className='w-3/12 absolute bg-black opacity-80 text-white my-56 mx-auto right-0 left-0 p-12'>
+        <img
+          src='https://assets.nflxext.com/ffe/siteui/vlv3/d13e2d55-5cdd-48c0-a55b-4b292d0b9889/web/IN-en-20251229-TRIFECTA-perspective_d7edcd70-4cfd-441c-858c-c5e400ed6c2b_medium.jpg'
+          alt="Background"
+        />
+      </div>
+      <form  onSubmit={(e) => e.preventDefault()} className='w-3/12 absolute bg-black opacity-90 text-white my-56 mx-auto right-0 left-0 p-12 rounded-lg'>
           <h1 className='font-bold text-3xl mb-6'>
             { isSignInForm ? "Sign In" : "Sign Up"}
           </h1>
 
           {!isSignInForm && (
           <input
+            ref={fullName }
             type="text"
             placeholder="Full Name"
             className="p-2 mb-4 w-full rounded-sm bg-gray-800 border-2 border-black"
@@ -32,18 +114,25 @@ const Login = () => {
           )}
 
           {<input
-              type="text"
+              ref={email}
+              type="email"
               placeholder="Email"
               className="p-2 mb-4 w-full rounded-sm bg-gray-800 border-2 border-black"
             />}
 
           {<input
-            type="Passward"
-            placeholder="Passward"
+            ref={password}
+            type="password"
+            placeholder="Password"
             className="p-2 mb-4 w-full rounded-sm bg-gray-800 border-2 border-black"
             />}
 
+          <p className='text-red-700 font-semibold'>{errorMessage}</p>
 
+          <button type="submit" className="p-2 my-4 w-full bg-red-700 rounded-lg" onClick={handleButtonClick}
+          >
+            {isSignInForm ? "Sign In" : "Sign Up"}
+          </button>
 
           <p onClick={toggleSignInForm} className="cursor-pointer">
             {isSignInForm ? "New user? Sign Up" : "Already a user? Sign In"}
@@ -55,6 +144,6 @@ const Login = () => {
 
    
   )
-}
 
+}
 export default Login;
