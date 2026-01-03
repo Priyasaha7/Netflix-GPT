@@ -3,9 +3,9 @@ import Header from './Header';
 import checkValidate from '../utils/validate';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile} from "firebase/auth";
 import { auth } from "../utils/firebase.js";
-import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { addUser } from '../utils/userSlice.js';
+import { USER_AVATAR } from '../utils/constants.js';
 
 const Login = () => {
 
@@ -15,7 +15,6 @@ const Login = () => {
 
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const navigate = useNavigate();
 
   const email = useRef(null);
   const password = useRef(null);
@@ -48,9 +47,8 @@ const Login = () => {
           const user = userCredential.user;
            updateProfile(user, {
             displayName: nameValue,
-            photoURL: "https://wallpapers.com/images/hd/netflix-profile-pictures-1000-x-1000-qo9h82134t9nv0j0.jpg",
+            photoURL: USER_AVATAR,
           }).then(() => {
-            navigate("/browse");
           });
         })
 
@@ -74,7 +72,6 @@ const Login = () => {
           const {user} = userCredential.user;
           console.log(user);
           dispatch(addUser(user));
-          navigate('/browse');
           
         })
         .catch((error) => {
