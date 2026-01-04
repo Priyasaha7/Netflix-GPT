@@ -11,3 +11,14 @@ export const API_OPTIONS = {
 };
 
 export const CDN_IMG_URL = "https://image.tmdb.org/t/p/w200"
+
+export const BG_IMG = 'https://assets.nflxext.com/ffe/siteui/vlv3/d13e2d55-5cdd-48c0-a55b-4b292d0b9889/web/IN-en-20251229-TRIFECTA-perspective_d7edcd70-4cfd-441c-858c-c5e400ed6c2b_medium.jpg'
+
+export const SUPPORTED_LANGUAGES = [
+  { identifier: "en", name: "English" },
+  { identifier: "hindi", name: "हिंदी" },
+  { identifier: "spanish", name: "español" },
+];
+
+export const MODEL_INSTRUCTION =
+  "Act as a movie recommendation system where you have to recommend 5 best movies for the query. Give me the name of the movies only in the format I specified in example. Example - movie1, movie2, movie3, movie4, movie5";
