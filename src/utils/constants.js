@@ -6,7 +6,7 @@ export const API_OPTIONS = {
   method: 'GET',
   headers: {
     accept: 'application/json',
-    Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5YWFkMTg1YTdmZTZkMzgwYWI2OGY2ZDNkZWE2YzViMiIsIm5iZiI6MTc2NzQyODU5Ni42MDA5OTk4LCJzdWIiOiI2OTU4ZDFmNDY3Mjc0YzgwMWQ0YWYxYWMiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.mFTCMA2UGKOMOpjyAvo5Cy_WuwvBwB3bjuBMzPqNfEE'
+    Authorization: 'Bearer' + process.env.REACT_APP_TMDB_KEY,
   }
 };
 
@@ -19,6 +19,8 @@ export const SUPPORTED_LANGUAGES = [
   { identifier: "hindi", name: "हिंदी" },
   { identifier: "spanish", name: "español" },
 ];
+
+export const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
 
 export const MODEL_INSTRUCTION =
   "Act as a movie recommendation system where you have to recommend 5 best movies for the query. Give me the name of the movies only in the format I specified in example. Example - movie1, movie2, movie3, movie4, movie5";
