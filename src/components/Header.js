@@ -51,7 +51,7 @@ const Header = () => {
  }
 
   return (
-<div className="absolute inset-x-0 top-0 px-8 py-2 bg-gradient-to-b from-black z-30 flex justify-between items-center">      <img
+<div className="absolute inset-x-0 top-0 px-8 py-2 bg-gradient-to-b from-black z-30 flex flex-col md:flex-row justify-center md:justify-between items-center">      <img
         className="w-40"
         src={LOGO}
         alt="Netflix Logo"
