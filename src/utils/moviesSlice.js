@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const moviesSlice = createSlice({
-  name: "movies",
+  name: "movies", //Name of the slice
   initialState: {
     nowPlayingMovies: null,
     popularMovies: null,
@@ -9,9 +9,10 @@ const moviesSlice = createSlice({
     upcomingMovies: null,
     trailerVideo: null,
   },
+  //Reducers define how data can change.
   reducers: {
     addNowPlayingMovies: (state, action) => {
-      state.nowPlayingMovies = action.payload;
+      state.nowPlayingMovies = action.payload;  //action.payload contains user info
     },
     addPopularMovies: (state, action) => {
       state.popularMovies = action.payload;
@@ -29,4 +30,7 @@ const moviesSlice = createSlice({
 });
 
 export const { addNowPlayingMovies, addTrailerVideo, addPopularMovies, addTopRatedMovies, addUpcomingMovies } = moviesSlice.actions;
+//Allows components to use these actions
+
 export default moviesSlice.reducer;
+//Store needs reducer rules

@@ -6,75 +6,103 @@ import { API_OPTIONS } from "../utils/constants";
 import { addGptMovieResult } from "../utils/gptSlice";
 
 const GptSearchBar = () => {
+  const dispatch = useDispatch();
+  const langKey = useSelector((store) => store.config.lang);
+  const searchText = useRef(null);
 
-    const dispatch = useDispatch();
-    const langKey = useSelector((store) => store.config.lang);
-    const searchText = useRef(null);
+  const searchMovieTMDB = async (movie) => {
+    const data = await fetch(
+      "https://api.themoviedb.org/3/search/movie?query=" +
+        movie +
+        "&include_adult=false&language=en-US&page=1",
+      API_OPTIONS
+    );
+    const json = await data.json();
+    return json.results;
+  };
 
-    const searchMovieTMDB = async (movie) => {
-        const data = await fetch('https://api.themoviedb.org/3/search/movie?query=' + movie + '&include_adult=false&language=en-US&page=1', API_OPTIONS)
+  const handleGptSearchClick = async () => {
+    if (!searchText.current.value) return;
 
-        const json = await data.json();
+    const gptQuery =
+      "Act as a movie recommendation system and suggest 10 movies for: " +
+      searchText.current.value +
+      ". Give only comma separated movie names.";
 
-        return json.results;
+    const gptResults = await genAi.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: gptQuery,
+    });
 
-    }
+    if (!gptResults.text) return;
+    // TODO: add proper error handling
 
-    const handleGptSearchClick = async () => {
-        console.log(searchText.current.value);
+    const gptMovies = gptResults.text.split(",");
 
-        const gptQuery = "Act as a movie recommendation system where you have to recommend 10 best movies for the query:" + 
-    searchText.current.value + "Give me the name of the movies only in the format I specified in example. Example - movie1, movie2, movie3, movie4, movie5, movie6, movie7, movie8, movie9, movie10"
+    const promiseArray = gptMovies.map((movie) =>
+      searchMovieTMDB(movie.trim())
+    );
 
-        const gptResults = await genAi.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: gptQuery,
-        });
+    const tmdbResults = await Promise.all(promiseArray);
 
-        if(!gptResults.text) return;
-        //TODO : write error handelling 
-
-        console.log(gptResults.text);
-        //Padosan, Gol Maal, Jaane Bhi Do Yaaro, Chupke Chupke, Angoor
-
-        const gptMovies = gptResults.text.split(",");
-        console.log(gptMovies);
-        //(5) ['Jaane Bhi Do Yaaro', ' Gol Maal', ' Chupke Chupke', ' Angoor', ' Padosan']
-
-        // for each movie i will search TMDB API
-        const promiseArray = gptMovies.map((movie) => searchMovieTMDB(movie));
-        // [Promise, Promise, Promise, Promise, Promise]
-
-        const tmdbResults = await Promise.all(promiseArray);
-        console.log(tmdbResults);
-        
-        dispatch(addGptMovieResult( { movieNames: gptMovies, movieResults: tmdbResults }));
-        
-        
-    }
+    dispatch(
+      addGptMovieResult({
+        movieNames: gptMovies,
+        movieResults: tmdbResults,
+      })
+    );
+  };
 
   return (
-    <div className="md:pt-[10%] pt-[30%]  flex justify-center">
-      <form className=" w-full md:w-1/2 flex items-center bg-black/80 p-4 rounded-lg shadow-xl" 
-      onSubmit={(e) => e.preventDefault()}>
-        
+    <div className="pt-[28%] md:pt-[10%] flex justify-center px-4">
+      <form
+        onSubmit={(e) => e.preventDefault()}
+        className="
+          w-full md:w-1/2
+          bg-black/80
+          p-4
+          rounded-lg
+          shadow-xl
+          flex
+          flex-row
+          gap-3
+        "
+      >
         <input
           ref={searchText}
           type="text"
           placeholder={lang[langKey].gptSearchPlaceholder}
-          className="w-[420px] p-3 rounded-md outline-none text-sm"
+          className="
+            flex-1
+            p-3
+            rounded-md
+            outline-none
+            text-sm
+            text-white
+          "
         />
 
         <button
-          className="ml-4 px-6 py-3 bg-red-700 hover:bg-red-800 text-white text-sm font-semibold rounded-md transition"
           onClick={handleGptSearchClick}
+          className="
+            px-6
+            py-3
+            bg-red-700
+            hover:bg-red-800
+            text-white
+            text-sm
+            font-semibold
+            rounded-md
+            transition
+            whitespace-nowrap
+          "
         >
           {lang[langKey].search}
         </button>
-
       </form>
     </div>
   );
 };
 
 export default GptSearchBar;
+

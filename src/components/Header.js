@@ -9,80 +9,77 @@ import { toggleGptSearchView } from "../utils/gptSlice";
 import { changeLanguage } from "../utils/configSlice"
 
 const Header = () => {
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const user = useSelector((store) => store.user);
-  const showGptSearch = useSelector((store) => store.gpt.showGptSearch)
-
+  const showGptSearch = useSelector((store) => store.gpt.showGptSearch);
 
   const handleSignOut = () => {
-    signOut(auth)
-      .then(() => navigate("/"))
-      .catch(() => navigate("/error"));
+    signOut(auth).then(() => navigate("/")).catch(() => navigate("/error"));
   };
 
   useEffect(() => {
-    const unsubscribe =  onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         const { uid, email, displayName, photoURL } = user;
-
-        dispatch(
-          addUser({ uid: uid, email: email, displayName: displayName, photoURL: photoURL }));
-          navigate("/browse");
+        dispatch(addUser({ uid, email, displayName, photoURL }));
+        navigate("/browse");
       } else {
         dispatch(removeUser());
         navigate("/");
       }
     });
-        // Unsubscribe when component unmounts
     return () => unsubscribe();
   }, []);
 
-
   const handleGPTSearchButton = () => {
-    // toggle gpt page  if someone clicks on the button  
     dispatch(toggleGptSearchView());
-  }
+  };
 
- const  handleLanguageChange = (e) => {
-    dispatch(changeLanguage(e.target.value))
- }
+  const handleLanguageChange = (e) => {
+    dispatch(changeLanguage(e.target.value));
+  };
 
   return (
-<div className="absolute inset-x-0 top-0 px-8 py-2 bg-gradient-to-b from-black z-30 flex flex-col md:flex-row justify-center md:justify-between items-center">      <img
-        className="w-40"
-        src={LOGO}
-        alt="Netflix Logo"
-      />
+    <div className="fixed top-0 left-0 w-full z-50 bg-black flex items-center justify-between px-4 py-2">
+      {/* Logo */}
+      <img className="w-28 sm:w-36 cursor-pointer" src={LOGO} alt="Netflix Logo" />
 
+      {/* User & Actions */}
       {user && (
         <div className="flex items-center gap-2">
-
-          { showGptSearch && (<select className="p-2 bg-slate-800 text-white" onChange={handleLanguageChange}>
-            {SUPPORTED_LANGUAGES.map((lang) => (
-              <option key={lang.identifier} value={lang.identifier}>{lang.name}</option>
-            ))}
-          </select>
+          {/* GPT Search toggle + language */}
+          {showGptSearch && (
+            <select
+              className="bg-slate-800 text-white p-1 text-sm rounded"
+              onChange={handleLanguageChange}
+            >
+              {SUPPORTED_LANGUAGES.map((lang) => (
+                <option key={lang.identifier} value={lang.identifier}>
+                  {lang.name}
+                </option>
+              ))}
+            </select>
           )}
 
-          <button className=" bg-slate-800 text-white px-4 py-2 text-sm" onClick={handleGPTSearchButton}>
-            { showGptSearch ? "Home Page":"GPT Search" }</button>
+          <button
+            onClick={handleGPTSearchButton}
+            className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 text-sm rounded"
+          >
+            {showGptSearch ? "Home" : "GPT Search"}
+          </button>
 
-          <img
-            className="w-8 h-8 rounded"
-            src={user.photoURL}
-            alt="usericon"
-          />
+          {/* User Avatar */}
+          <img className="w-8 h-8 rounded cursor-pointer" src={user.photoURL} alt="user icon" />
 
+          {/* Sign Out */}
           <button
             onClick={handleSignOut}
-            className="text-white font-semibold"
+            className="text-white text-sm font-semibold hover:underline"
           >
             Sign Out
           </button>
-
         </div>
       )}
     </div>

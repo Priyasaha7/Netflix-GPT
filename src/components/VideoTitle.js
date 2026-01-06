@@ -6,31 +6,59 @@ const VideoTitle = ({ title, overview }) => {
     <div
       className="
         absolute inset-0 z-20
-        flex items-center
-        px-6 sm:px-12 md:px-24
+        flex
+        items-end sm:items-center md:items-start
+        px-4 sm:px-10 md:px-16
+        pb-24 sm:pb-0
         text-white
         pointer-events-none
       "
     >
-      <div className="max-w-xl pointer-events-auto">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight">
+      <div
+        className="
+          w-full
+          text-center sm:text-left
+          sm:mt-0 md:mt-40
+          max-w-xl
+          pointer-events-auto
+        "
+      >
+        {/* TITLE */}
+        <h1 className="
+          text-2xl sm:text-4xl md:text-5xl
+          font-extrabold
+          leading-tight
+        ">
           {title}
         </h1>
 
-        <p className="mt-4 text-sm sm:text-base text-gray-200 line-clamp-3">
+        {/* DESCRIPTION */}
+        <p className="
+          hidden sm:block
+          mt-3
+          text-sm sm:text-base
+          text-gray-200
+          max-w-md
+          line-clamp-3
+        ">
           {overview}
         </p>
 
-        <div className="flex gap-4 mt-6">
+        {/* BUTTONS */}
+        <div className="
+          mt-5
+          flex
+          justify-center sm:justify-start
+          gap-3
+        ">
           <button
             className="
               flex items-center gap-2
               bg-white text-black
               font-semibold
-              py-2.5 px-6
+              py-2 px-5 sm:px-6
               rounded-md
               hover:bg-opacity-80
-              
             "
           >
             <FaPlay />
@@ -42,14 +70,13 @@ const VideoTitle = ({ title, overview }) => {
               flex items-center gap-2
               bg-gray-500/70 text-white
               font-semibold
-              py-2.5 px-6
+              py-2 px-5 sm:px-6
               rounded-md
               hover:bg-gray-500
-              transition
             "
           >
             <FaInfoCircle />
-            More Info
+            Info
           </button>
         </div>
       </div>
@@ -58,3 +85,4 @@ const VideoTitle = ({ title, overview }) => {
 };
 
 export default VideoTitle;
+
