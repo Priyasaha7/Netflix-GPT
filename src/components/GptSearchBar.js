@@ -78,7 +78,6 @@ const GptSearchBar = () => {
             rounded-md
             outline-none
             text-sm
-            text-white
           "
         />
 

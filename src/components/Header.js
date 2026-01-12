@@ -43,13 +43,12 @@ const Header = () => {
 
   return (
     <div className="fixed top-0 left-0 w-full z-50 bg-black flex items-center justify-between px-4 py-2">
-      {/* Logo */}
+
       <img className="w-28 sm:w-36 cursor-pointer" src={LOGO} alt="Netflix Logo" />
 
-      {/* User & Actions */}
+
       {user && (
         <div className="flex items-center gap-2">
-          {/* GPT Search toggle + language */}
           {showGptSearch && (
             <select
               className="bg-slate-800 text-white p-1 text-sm rounded"
@@ -70,10 +69,9 @@ const Header = () => {
             {showGptSearch ? "Home" : "GPT Search"}
           </button>
 
-          {/* User Avatar */}
           <img className="w-8 h-8 rounded cursor-pointer" src={user.photoURL} alt="user icon" />
 
-          {/* Sign Out */}
+      
           <button
             onClick={handleSignOut}
             className="text-white text-sm font-semibold hover:underline"
